@@ -14,7 +14,8 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout repo
+        uses: actions/checkout@v3
       - name: Use Node.js ${{matrix.node-version}}
         uses: actions/setup-node@v3
         with:
@@ -23,7 +24,7 @@ jobs:
       - name: serverless deploy
         uses: serverless/github-actions@v3.1
         with:
-          args: deploy
+          args: deploy --config backend/serverless.yml
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
