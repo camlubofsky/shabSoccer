@@ -2,7 +2,7 @@ name: GitHub Actions
 on:
   push:
     branches:
-      main
+      - main
 jobs:
   productionDeployment:
     name: production-deployment
