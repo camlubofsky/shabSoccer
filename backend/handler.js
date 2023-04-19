@@ -8,6 +8,9 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const send = (body, sc) => {
   return {
     statusCode: sc,
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:5174',
+    },
     body: JSON.stringify(body),
   };
 };

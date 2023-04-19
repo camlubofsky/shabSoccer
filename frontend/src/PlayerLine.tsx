@@ -30,7 +30,7 @@ export const PlayerLine: React.FC<TPlayer> = ({
   return (
     <>
       <Delete sx={{ cursor: 'pointer' }} onClick={() => onDelete(name)} />
-      <div>{name.label}</div>
+      <div>{name.name}</div>
       <TeamButton
         selected={name.team === 'light'}
         team="light"

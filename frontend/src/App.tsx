@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Stack } from '@mui/system';
 import { PlayerList } from './PlayerList';
 import { Search } from './Search';
@@ -7,10 +7,11 @@ import { TeamList } from './TeamList';
 import { teamCalculator } from './utils/teamCalc';
 import { names } from './utils/names';
 import { unselected } from './utils/unselected';
+import { getAllPlayers } from './utils/getAllPlayers';
 
 export interface Player {
-  value: string;
-  label: string;
+  playerId: string;
+  name: string;
   tier: number;
   team?: Team;
 }
@@ -19,7 +20,22 @@ export type Team = 'light' | 'dark' | null;
 
 function App() {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
+  const [names3, setNames3] = useState<Player[]>([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getAllPlayers();
+        setNames3(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log('names', names);
+  console.log('names2', names3);
   const handleSelectArray = (player: Player) => {
     setAllPlayers([...allPlayers, player]);
   };
@@ -39,7 +55,7 @@ function App() {
   };
 
   const removePlayer = (player: Player) => {
-    setAllPlayers(allPlayers.filter((p) => p.value !== player.value));
+    setAllPlayers(allPlayers.filter((p) => p.playerId !== player.playerId));
   };
 
   const lightPlayers = allPlayers.filter((player) => player.team === 'light');
@@ -50,8 +66,9 @@ function App() {
     lightPlayers.length > 0 && darkPlayers.length > 0;
   const teamsAreEqual = lightPlayers.length === darkPlayers.length;
 
-  const unselectedNames = unselected(allPlayers, names);
+  const unselectedNames = unselected(allPlayers, names3);
   const compare = teamCalculator(allPlayers);
+
   return (
     <Stack gap="20px">
       <div>

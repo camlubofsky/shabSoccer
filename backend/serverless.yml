@@ -23,6 +23,7 @@ functions:
       - http:
           method: post
           path: players
+          cors: true # <-- CORS!
 
   updatePlayer:
     handler: handler.updatePlayer
@@ -32,6 +33,7 @@ functions:
       - http:
           method: put
           path: players/{id}
+          cors: true # <-- CORS!
 
   deletePlayer:
     handler: handler.deletePlayer
@@ -41,6 +43,7 @@ functions:
       - http:
           method: delete
           path: players/{id}
+          cors: true # <-- CORS!
 
   getAllPlayers:
     handler: handler.getAllPlayers
@@ -50,6 +53,7 @@ functions:
       - http:
           method: get
           path: players
+          cors: true
 
 resources:
   Resources:

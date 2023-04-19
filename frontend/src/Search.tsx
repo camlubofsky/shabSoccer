@@ -31,7 +31,7 @@ export const Search: React.FC<TSearch> = ({ names, setChosenArray }) => {
         renderInput={(params) => (
           <TextField {...params} label="Select an option" variant="outlined" />
         )}
-        getOptionLabel={(option) => option.label}
+        getOptionLabel={(option) => option.name}
       />
     </div>
   );

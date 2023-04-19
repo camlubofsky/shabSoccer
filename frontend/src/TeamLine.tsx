@@ -21,7 +21,7 @@ export const TeamLine: React.FC<TTeamLine> = ({ player, onDelete }) => {
 
   return (
     <Stack sx={boxStyle}>
-      <div>{player.label}</div>
+      <div>{player.name}</div>
       <Delete sx={{ cursor: 'pointer' }} onClick={() => onDelete(player)} />
     </Stack>
   );
