@@ -5,28 +5,33 @@ import { PlayerList } from './PlayerList';
 import { Search } from './Search';
 import { TeamList } from './TeamList';
 import { teamCalculator } from './utils/teamCalc';
-import { names } from './utils/names';
 import { unselected } from './utils/unselected';
-import { getAllPlayers } from './utils/getAllPlayers';
+import {
+  changePlayStatus,
+  changeTeam,
+  getAllPlayers,
+  resetEveryone,
+} from './utils/handlers';
 
 export interface Player {
   playerId: string;
   name: string;
   tier: number;
   team?: Team;
+  playing: boolean;
 }
 
 export type Team = 'light' | 'dark' | null;
 
 function App() {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
-  const [names3, setNames3] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getAllPlayers();
-        setNames3(data);
+        setPlayers(data);
       } catch (error) {
         console.log(error);
       }
@@ -34,58 +39,60 @@ function App() {
     fetchData();
   }, []);
 
-  console.log('names', names);
-  console.log('names2', names3);
-  const handleSelectArray = (player: Player) => {
-    setAllPlayers([...allPlayers, player]);
+  const selectPlayer = async (player: Player) => {
+    try {
+      await changePlayStatus(player);
+      setPlayers(await getAllPlayers());
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const updateState = (value: Player, team: Team) => {
-    const updatedState = allPlayers.map((player) => {
-      if (player === value) {
-        return { ...player, team: team };
-      }
-      return player;
-    });
-    setAllPlayers(updatedState);
+  const selectTeam = async (player: Player, team: Team) => {
+    try {
+      await changeTeam(player, team);
+      setPlayers(await getAllPlayers());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const removePlayerFromTeam = (player: Player) => {
-    updateState(player, null);
-  };
-
-  const removePlayer = (player: Player) => {
-    setAllPlayers(allPlayers.filter((p) => p.playerId !== player.playerId));
-  };
-
-  const lightPlayers = allPlayers.filter((player) => player.team === 'light');
-  const darkPlayers = allPlayers.filter((player) => player.team === 'dark');
-  const totalSelectedPlayers = lightPlayers.length + darkPlayers.length;
-
+  const lightPlayers = players.filter((player) => player.team === 'light');
+  const darkPlayers = players.filter((player) => player.team === 'dark');
+  const totalSelectedPlayers = players.filter(
+    (player) => player.playing
+  ).length;
   const bothTeamsHavePlayers =
     lightPlayers.length > 0 && darkPlayers.length > 0;
   const teamsAreEqual = lightPlayers.length === darkPlayers.length;
 
-  const unselectedNames = unselected(allPlayers, names3);
-  const compare = teamCalculator(allPlayers);
+  const compare = teamCalculator(players);
+
+  const resetHandler = async () => {
+    await resetEveryone();
+    console.log(players);
+    setPlayers(await getAllPlayers());
+    console.log(players);
+  };
+
+  const playerSelected = players.filter((p) => !p.playing);
+
+  // console.log(players);
 
   return (
     <Stack gap="20px">
       <div>
-        <Search
-          names={unselectedNames}
-          allPlayers={allPlayers}
-          setChosenArray={handleSelectArray}
-        />
+        <Search names={playerSelected} setChosenArray={selectPlayer} />
         <div style={{ marginTop: '10px' }}>
           Total Players: {allPlayers.length}
         </div>
+        <button onClick={resetHandler}>Reset</button>
       </div>
       <Stack display="flex" flexDirection="row" gap="100px">
         <PlayerList
-          names={allPlayers}
-          onTeamSelect={updateState}
-          onDelete={removePlayer}
+          names={players.filter((p) => p.playing)}
+          onTeamSelect={selectTeam}
+          onDelete={selectPlayer}
         />
         <Stack
           display="flex"
@@ -96,13 +103,9 @@ function App() {
           <TeamList
             color="light"
             players={lightPlayers}
-            onDelete={removePlayerFromTeam}
+            onDelete={selectTeam}
           />
-          <TeamList
-            color="dark"
-            players={darkPlayers}
-            onDelete={removePlayerFromTeam}
-          />
+          <TeamList color="dark" players={darkPlayers} onDelete={selectTeam} />
         </Stack>
       </Stack>
       {totalSelectedPlayers > 5 && teamsAreEqual && bothTeamsHavePlayers && (

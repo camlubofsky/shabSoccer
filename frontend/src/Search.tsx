@@ -5,7 +5,6 @@ import { Player } from './App';
 type TSearch = {
   names: Array<Player>;
   setChosenArray: any;
-  allPlayers: Array<Player>;
 };
 
 export const Search: React.FC<TSearch> = ({ names, setChosenArray }) => {

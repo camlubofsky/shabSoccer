@@ -30,7 +30,7 @@ export const TeamList: React.FC<TTeamList> = ({ players, color, onDelete }) => {
         {title}
       </Typography>
       {players.map((player) => (
-        <Stack gap="8px" flexDirection="row" key={player.value}>
+        <Stack gap="8px" flexDirection="row" key={player.playerId}>
           <TeamLine player={player} onDelete={onDelete} />
         </Stack>
       ))}

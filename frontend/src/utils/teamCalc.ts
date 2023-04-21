@@ -47,6 +47,8 @@ export const teamCalculator = (players: Player[]) => {
     return { fairness, color };
   };
 
+  console.log(lightSum, darkSum);
+
   const { fairness, color } = checkFairness(betterTeamLead);
 
   return {

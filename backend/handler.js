@@ -9,20 +9,21 @@ const send = (body, sc) => {
   return {
     statusCode: sc,
     headers: {
-      'Access-Control-Allow-Origin': 'http://localhost:5174',
+      'Access-Control-Allow-Origin': '*',
     },
     body: JSON.stringify(body),
   };
 };
 
 module.exports.createPlayer = async (event, context, cb) => {
-  const { name, tier, team } = JSON.parse(event.body);
+  const { name, tier } = JSON.parse(event.body);
   try {
     const player = {
       playerId: uuid.v4(),
       name,
       tier,
-      team,
+      team: null,
+      playing: false,
     };
     const params = {
       TableName: process.env.PLAYER_TABLE,
@@ -40,20 +41,21 @@ module.exports.createPlayer = async (event, context, cb) => {
 module.exports.updatePlayer = async (event, context, cb) => {
   let playerId = event.pathParameters.id;
   let data = JSON.parse(event.body);
-  const team = data.team;
 
   try {
     const params = {
       TableName: process.env.PLAYER_TABLE,
       Key: { playerId },
-      UpdateExpression: 'set #team = :team, #tier = :tier',
+      UpdateExpression: 'set #team = :team, #tier = :tier, #playing = :playing',
       ExpressionAttributeNames: {
         '#team': 'team',
         '#tier': 'tier',
+        '#playing': 'playing',
       },
       ExpressionAttributeValues: {
         ':team': data.team,
         ':tier': data.tier,
+        ':playing': data.playing,
       },
       ConditionExpression: 'attribute_exists(playerId)',
     };

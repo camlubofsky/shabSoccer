@@ -1,8 +1,8 @@
 import { Delete } from '@mui/icons-material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TeamButton } from './TeamButton';
-import { Player } from './App';
-import { dark } from '@mui/material/styles/createPalette';
+import { Player, Team } from './App';
+import { changeTeam } from './utils/handlers';
 
 type TPlayer = {
   name: Player;
@@ -15,18 +15,6 @@ export const PlayerLine: React.FC<TPlayer> = ({
   onDelete,
   onTeamSelect,
 }) => {
-  const [team, setTeam] = useState<'light' | 'dark' | null>(null);
-
-  const lightHandler = (name: Player) => {
-    onTeamSelect(name, 'light');
-    setTeam('light');
-  };
-
-  const darkHandler = (name: Player) => {
-    onTeamSelect(name, 'dark');
-    setTeam('dark');
-  };
-
   return (
     <>
       <Delete sx={{ cursor: 'pointer' }} onClick={() => onDelete(name)} />
@@ -34,12 +22,12 @@ export const PlayerLine: React.FC<TPlayer> = ({
       <TeamButton
         selected={name.team === 'light'}
         team="light"
-        onButtonClick={() => lightHandler(name)}
+        onButtonClick={() => onTeamSelect(name, 'light')}
       />
       <TeamButton
         selected={name.team === 'dark'}
         team="dark"
-        onButtonClick={() => darkHandler(name)}
+        onButtonClick={() => onTeamSelect(name, 'dark')}
       />
     </>
   );
