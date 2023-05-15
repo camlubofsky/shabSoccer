@@ -1,3 +1,4 @@
+import { light } from '@mui/material/styles/createPalette';
 import { Player } from '../App';
 
 export const teamCalculator = (players: Player[]) => {
@@ -9,9 +10,9 @@ export const teamCalculator = (players: Player[]) => {
 
     players.forEach((player) => {
       if (player.team === 'light') {
-        result.lightSum += player.tier;
+        result.lightSum += player.tier!;
       } else if (player.team === 'dark') {
-        result.darkSum += player.tier;
+        result.darkSum += player.tier!;
       }
     });
 
@@ -23,7 +24,7 @@ export const teamCalculator = (players: Player[]) => {
   let betterTeam = Math.min(lightSum, darkSum);
   let worseTeam = Math.max(lightSum, darkSum);
 
-  const betterTeamLead = (worseTeam - betterTeam) / betterTeam;
+  const betterTeamLead = (worseTeam - betterTeam) / worseTeam;
   const betterTeamName = lightSum < darkSum ? 'Light' : 'Dark';
   const worseTeamName = lightSum < darkSum ? 'Dark' : 'Light';
 
@@ -34,6 +35,10 @@ export const teamCalculator = (players: Player[]) => {
       case betterTeamLead === 0:
         fairness = 'perfectly even';
         color = 'green';
+        break;
+      case betterTeamLead < 0.05:
+        fairness = 'very fair';
+        color = 'orange';
         break;
       case betterTeamLead < 0.15:
         fairness = 'pretty fair';
@@ -47,14 +52,14 @@ export const teamCalculator = (players: Player[]) => {
     return { fairness, color };
   };
 
-  console.log(lightSum, darkSum);
-
   const { fairness, color } = checkFairness(betterTeamLead);
+  console.log(lightSum, 'light');
+  console.log(darkSum, 'dark');
 
   return {
     lightSum,
     darkSum,
-    betterTeamLead: betterTeamLead.toFixed(2),
+    betterTeamLead: (betterTeamLead * 100).toFixed(0),
     betterTeamName,
     worseTeamName,
     fairness,

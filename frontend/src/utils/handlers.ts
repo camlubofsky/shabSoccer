@@ -20,7 +20,6 @@ export const changePlayStatus = async (player: Player) => {
       team: player.team,
       tier: player.tier,
       name: player.name,
-      playing: !player.playing,
     };
     const response = await axios.put(url, data);
     return { ...response.data, playerId: player.playerId };
@@ -38,7 +37,6 @@ export const changeTeam = async (player: Player, team: Team) => {
       team,
       tier: player.tier,
       name: player.name,
-      playing: player.playing,
     };
 
     console.log(data);
@@ -64,7 +62,7 @@ export const resetEveryone = async () => {
         playing: false,
       };
       const response = await axios.put(url, data);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.log(error);
     }

@@ -23,7 +23,6 @@ module.exports.createPlayer = async (event, context, cb) => {
       name,
       tier,
       team: null,
-      playing: false,
     };
     const params = {
       TableName: process.env.PLAYER_TABLE,
@@ -46,16 +45,14 @@ module.exports.updatePlayer = async (event, context, cb) => {
     const params = {
       TableName: process.env.PLAYER_TABLE,
       Key: { playerId },
-      UpdateExpression: 'set #team = :team, #tier = :tier, #playing = :playing',
+      UpdateExpression: 'set #team = :team, #tier = :tier',
       ExpressionAttributeNames: {
         '#team': 'team',
         '#tier': 'tier',
-        '#playing': 'playing',
       },
       ExpressionAttributeValues: {
         ':team': data.team,
         ':tier': data.tier,
-        ':playing': data.playing,
       },
       ConditionExpression: 'attribute_exists(playerId)',
     };
